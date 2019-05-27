@@ -63,4 +63,10 @@ public class TeamController {
         }
         return list;
     }
+
+    @PostMapping("/mapper/")
+    public void addTeamWithMapper(@RequestBody final Team t){
+        ModelMapper mm = new ModelMapper();
+        teamRepository.save(mm.map(t,Team.class));
+    }
 }
