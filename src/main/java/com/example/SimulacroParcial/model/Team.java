@@ -29,6 +29,6 @@ public class Team {
     private String name;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "team")
-    @Max(value = 23, message = "Players should not be greater than 23")
+    //@Max(value = 23, message = "Players should not be greater than 23")
     private List<Player> players;
 }

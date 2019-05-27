@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.HttpClientErrorException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -50,5 +51,16 @@ public class TeamController {
     public Optional getWithMapper(@PathVariable final Integer idEquipo){
         ModelMapper mm= new ModelMapper();
         return mm.map(teamRepository.findById(idEquipo),Optional.class);
+    }
+
+    @GetMapping("/mapper/")
+    public List<Team> GetAllWithMapper(){
+        ModelMapper mm = new ModelMapper();
+        List<Team> list = new ArrayList<>();
+
+        for (Team t: teamRepository.findAll()){
+            list.add(mm.map(t,Team.class));
+        }
+        return list;
     }
 }
