@@ -24,35 +24,40 @@ public class TeamController {
 
     private static final String TEAM_NOT_FOUND = "No existe el equipo con el id: %s";
 
-
     @Autowired
     private TeamRepository teamRepository;
 
+    private ModelMapper mm = new ModelMapper();
+
     @PostMapping("")
     public void addTeam(@RequestBody final Team t){
-        teamRepository.save(t);
+        teamRepository.save(mm.map(t,Team.class));
     }
 
     @GetMapping("")
     public List<Team> getAll(){
-        return teamRepository.findAll();
+        List<Team> list = new ArrayList<>();
+
+        for (Team t: teamRepository.findAll()){
+            list.add(mm.map(t,Team.class));
+        }
+        return list;
     }
 
     @PostMapping("/addPlayer/{idEquipo}")
     public void addPlayer(@PathVariable final Integer idEquipo, @RequestBody final Player p){
-        Team t = teamRepository.findById(idEquipo)
-                .orElseThrow(() -> new HttpClientErrorException(HttpStatus.BAD_REQUEST, String.format(TEAM_NOT_FOUND,idEquipo)));
+        Team t = mm.map(teamRepository.findById(idEquipo).orElseThrow(() -> new HttpClientErrorException(HttpStatus.BAD_REQUEST, String.format(TEAM_NOT_FOUND,idEquipo))),Team.class);
         t.getPlayers().add(p);
         p.setTeam(t);
-        teamRepository.save(t);
+        this.addTeam(t);
     }
 
     @GetMapping("/mapper/{idEquipo}")
     public Optional getWithMapper(@PathVariable final Integer idEquipo){
-        ModelMapper mm= new ModelMapper();
         return mm.map(teamRepository.findById(idEquipo),Optional.class);
     }
 
+    /** Comentado por optimizacion de codigo
     @GetMapping("/mapper/")
     public List<Team> GetAllWithMapper(){
         ModelMapper mm = new ModelMapper();
@@ -69,4 +74,5 @@ public class TeamController {
         ModelMapper mm = new ModelMapper();
         teamRepository.save(mm.map(t,Team.class));
     }
+    **/
 }
